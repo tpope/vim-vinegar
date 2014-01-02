@@ -20,15 +20,48 @@ let g:netrw_sort_sequence = '[\/]$,*,\%(' . join(map(split(&suffixes, ','), s:es
 let g:netrw_list_hide = join(map(split(&wildignore, ','), '"^".' . s:escape . '. "$"'), ',') . ',^\.\.\=/\=$'
 let g:netrw_banner = 0
 
-nnoremap <silent> <Plug>VinegarUp :if empty(expand('%'))<Bar>edit .<Bar>else<Bar>edit %:h<Bar>call <SID>seek(expand('%:t'))<Bar>endif<CR>
-if empty(maparg('-', 'n'))
-  nmap - <Plug>VinegarUp
-endif
+nmap <silent> <unique> - :call <SID>VinegarUp()<CR>
 
-function! s:seek(file)
-  let pattern = '^'.escape(expand('#:t'), '.*[]~\').'[/*|@=]\=\%($\|\t\)'
-  call search(pattern, 'wc')
-  return pattern
+function! s:seek()
+  if !empty(w:dirstack)
+    let l:tail = fnamemodify(substitute(w:dirstack[-1], "/$", "", ""), ':t')
+    let pattern = '^'.escape(l:tail, '.*[]~\').'[/*|@=]\=\%($\|\t\)'
+    call search(pattern, 'wc')
+  endif
+endfunction
+
+function! s:VinegarUp()
+  call s:pushd()
+  if exists(':Rexplore')
+    Rexplore
+  else
+    Explore
+    call s:seek()
+  endif
+endfunction
+
+function s:pushd()
+  if !exists('w:dirstack')
+    let w:dirstack = []
+  endif
+  if &filetype == 'netrw'
+    call add(w:dirstack, b:netrw_curdir)
+  elseif !empty(expand('%'))
+    call add(w:dirstack, expand('%'))
+  endif
+endfunction
+
+function! s:popd()
+  if exists('w:dirstack') && !empty(w:dirstack)
+    if w:dirstack[-1] == b:netrw_curdir
+      call remove(w:dirstack, -1)
+      if !empty(w:dirstack)
+        call s:seek()
+      endif
+    else
+      let w:dirstack = []
+    endif
+  endif
 endfunction
 
 augroup vinegar
@@ -44,7 +77,12 @@ function! s:escaped(first, last) abort
 endfunction
 
 function! s:setup_vinegar() abort
-  nmap <buffer> - <Plug>VinegarUp
+  if maparg('-', 'n') !~ 'pushd'
+    execute 'nmap <buffer> <silent> - :call <SID>pushd()<Bar>'. substitute(escape(maparg('-', 'n'), '|'), '<CR>', '<Bar>call <SID>seek()<CR>', '')
+  endif
+  if maparg('<CR>', 'n') !~ 'popd'
+    execute 'nmap <buffer> <silent> <CR> '. substitute(escape(maparg('<CR>', 'n'), '|'), '<CR>', '<Bar>call <SID>popd()<CR>', '')
+  endif
   nnoremap <buffer> ~ :edit ~/<CR>
   nnoremap <buffer> . :<C-U> <C-R>=<SID>escaped(line('.'), line('.') - 1 + v:count1)<CR><Home>
   xnoremap <buffer> . <Esc>: <C-R>=<SID>escaped(line("'<"), line("'>"))<CR><Home>
