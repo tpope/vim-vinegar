@@ -32,12 +32,10 @@ endfunction
 
 function! s:VinegarUp()
   call s:pushd()
-  if exists(':Rexplore')
-    Rexplore
-  else
-    Explore
-    call s:seek()
-  endif
+  let l:keepalt = (&filetype == 'netrw' || empty(expand('%'))) ? 'keepalt ' : ''
+  let g:remote = (0 == match(expand('%'), "^.\\+://")) ? '/' : ''
+  execute l:keepalt .'edit '. fnamemodify(substitute(expand('%'), "/$", "", ""), ':h') .g:remote
+  call s:seek()
 endfunction
 
 function s:pushd()
@@ -52,7 +50,10 @@ function s:pushd()
 endfunction
 
 function! s:popd()
-  if exists('w:dirstack') && !empty(w:dirstack)
+  if !exists('w:dirstack')
+    let w:dirstack = []
+  endif
+  if !empty(w:dirstack)
     if w:dirstack[-1] == b:netrw_curdir
       call remove(w:dirstack, -1)
       if !empty(w:dirstack)
@@ -67,6 +68,7 @@ endfunction
 augroup vinegar
   autocmd!
   autocmd FileType netrw call s:setup_vinegar()
+  autocmd BufRead * :if &filetype != 'netrw'|let w:dirstack = []|endif
 augroup END
 
 function! s:escaped(first, last) abort
@@ -77,9 +79,8 @@ function! s:escaped(first, last) abort
 endfunction
 
 function! s:setup_vinegar() abort
-  if maparg('-', 'n') !~ 'pushd'
-    execute 'nmap <buffer> <silent> - :call <SID>pushd()<Bar>'. substitute(escape(maparg('-', 'n'), '|'), '<CR>', '<Bar>call <SID>seek()<CR>', '')
-  endif
+  nmap <buffer> <C-^> :keepalt edit #<CR>
+  nmap <buffer> <silent> - :call <SID>VinegarUp()<CR>
   if maparg('<CR>', 'n') !~ 'popd'
     execute 'nmap <buffer> <silent> <CR> '. substitute(escape(maparg('<CR>', 'n'), '|'), '<CR>', '<Bar>call <SID>popd()<CR>', '')
   endif
