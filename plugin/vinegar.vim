@@ -33,9 +33,16 @@ endfunction
 function! s:VinegarUp()
   call s:pushd()
   let l:keepalt = (&filetype == 'netrw' || empty(expand('%'))) ? 'keepalt ' : ''
-  let g:remote = (0 == match(expand('%'), "^.\\+://")) ? '/' : ''
-  execute l:keepalt .'edit '. fnamemodify(substitute(expand('%'), "/$", "", ""), ':h') .g:remote
+  let l:remote = (0 == match(expand('%'), "^.\\+://")) ? '/' : ''
+  execute l:keepalt .'edit '. fnamemodify(substitute(expand('%'), "/$", "", ""), ':h') .l:remote
   call s:seek()
+endfunction
+
+function! s:VinegarDown()
+  let l:dir = s:escaped(line('.'), line('.'))
+  let l:remote = (0 == match(expand('%'), "^.\\+://")) ? '/' : ''
+  execute 'keepalt edit '. l:dir . l:remote
+  call s:popd()
 endfunction
 
 function s:pushd()
@@ -78,9 +85,7 @@ endfunction
 function! s:setup_vinegar() abort
   nmap <buffer> <C-^> :keepalt edit #<CR>
   nmap <buffer> <silent> - :call <SID>VinegarUp()<CR>
-  if maparg('<CR>', 'n') !~ 'popd'
-    execute 'nmap <buffer> <silent> <CR> '. substitute(escape(maparg('<CR>', 'n'), '|'), '<CR>', '<Bar>call <SID>popd()<CR>', '')
-  endif
+  nmap <buffer> <silent> <CR> :call <SID>VinegarDown()<CR>
   nnoremap <buffer> ~ :edit ~/<CR>
   nnoremap <buffer> . :<C-U> <C-R>=<SID>escaped(line('.'), line('.') - 1 + v:count1)<CR><Home>
   xnoremap <buffer> . <Esc>: <C-R>=<SID>escaped(line("'<"), line("'>"))<CR><Home>
