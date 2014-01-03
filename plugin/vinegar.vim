@@ -33,12 +33,12 @@ endfunction
 function! s:VinegarUp()
   call s:pushd()
   let l:keepalt = (&filetype == 'netrw' || empty(expand('%'))) ? 'keepalt ' : ''
-  execute l:keepalt .'edit '. fnamemodify(expand('%'), ':h')
+  execute l:keepalt .'edit '. fnameescape(fnamemodify(expand('%'), ':h'))
   call s:seek()
 endfunction
 
 function! s:VinegarDown()
-  execute 'keepalt edit '. s:escaped(line('.'), line('.'))
+  execute 'keepalt edit '. fnameescape(s:escaped(line('.'), line('.')))
   call s:popd()
 endfunction
 
