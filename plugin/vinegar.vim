@@ -50,10 +50,7 @@ function s:pushd()
 endfunction
 
 function! s:popd()
-  if !exists('w:dirstack')
-    let w:dirstack = []
-  endif
-  if !empty(w:dirstack)
+  if exists('w:dirstack') && !empty(w:dirstack)
     if w:dirstack[-1] == b:netrw_curdir
       call remove(w:dirstack, -1)
       if !empty(w:dirstack)
