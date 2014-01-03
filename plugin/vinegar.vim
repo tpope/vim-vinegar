@@ -24,7 +24,7 @@ nmap <silent> <unique> - :call <SID>VinegarUp()<CR>
 
 function! s:seek()
   if !empty(w:dirstack)
-    let l:tail = fnamemodify(substitute(w:dirstack[-1], "/$", "", ""), ':t')
+    let l:tail = fnamemodify(w:dirstack[-1], ':t')
     let pattern = '^'.escape(l:tail, '.*[]~\').'[/*|@=]\=\%($\|\t\)'
     call search(pattern, 'wc')
   endif
@@ -33,15 +33,12 @@ endfunction
 function! s:VinegarUp()
   call s:pushd()
   let l:keepalt = (&filetype == 'netrw' || empty(expand('%'))) ? 'keepalt ' : ''
-  let l:remote = (0 == match(expand('%'), "^.\\+://")) ? '/' : ''
-  execute l:keepalt .'edit '. fnamemodify(substitute(expand('%'), "/$", "", ""), ':h') .l:remote
+  execute l:keepalt .'edit '. fnamemodify(expand('%'), ':h')
   call s:seek()
 endfunction
 
 function! s:VinegarDown()
-  let l:dir = s:escaped(line('.'), line('.'))
-  let l:remote = (0 == match(expand('%'), "^.\\+://")) ? '/' : ''
-  execute 'keepalt edit '. l:dir . l:remote
+  execute 'keepalt edit '. s:escaped(line('.'), line('.'))
   call s:popd()
 endfunction
 
