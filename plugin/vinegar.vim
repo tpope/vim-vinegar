@@ -22,54 +22,37 @@ let g:netrw_banner = 0
 
 nmap <silent> <unique> - :call <SID>VinegarUp()<CR>
 
-function! s:seek()
-  if !empty(w:dirstack)
-    let l:tail = fnamemodify(w:dirstack[-1], ':t')
-    let pattern = '^'.escape(l:tail, '.*[]~\').'[/*|@=]\=\%($\|\t\)'
-    call search(pattern, 'wc')
-  endif
-endfunction
-
 function! s:VinegarUp()
-  call s:pushd()
+  let l:oldpwd = exists('b:netrw_curdir') ? b:netrw_curdir : expand('%')
   let l:keepalt = (&filetype == 'netrw' || empty(expand('%'))) ? 'keepalt ' : ''
   execute l:keepalt .'edit '. fnameescape(fnamemodify(expand('%'), ':h'))
-  call s:seek()
+  let l:pattern = '^'.escape(fnamemodify(l:oldpwd, ':t'), '.*[]~\').'[/*|@=]\=\%($\|\t\)'
+  call search(l:pattern, 'wc')
 endfunction
 
 function! s:VinegarDown()
   execute 'keepalt edit '. fnameescape(s:escaped(line('.'), line('.')))
-  call s:popd()
 endfunction
 
-function s:pushd()
-  if !exists('w:dirstack')
-    let w:dirstack = []
+function s:SavePosn()
+  if !exists('w:vinegar_lastpos')
+    let w:vinegar_lastpos = {}
   endif
   if &filetype == 'netrw'
-    call add(w:dirstack, b:netrw_curdir)
-  elseif !empty(expand('%'))
-    call add(w:dirstack, expand('%'))
+    let w:vinegar_lastpos[b:netrw_curdir] = netrw#NetrwSavePosn()
   endif
 endfunction
 
-function! s:popd()
-  if exists('w:dirstack') && !empty(w:dirstack)
-    if w:dirstack[-1] == b:netrw_curdir
-      call remove(w:dirstack, -1)
-      if !empty(w:dirstack)
-        call s:seek()
-      endif
-    else
-      let w:dirstack = []
-    endif
+function! s:RestorePosn()
+  if &filetype == 'netrw' && exists('w:vinegar_lastpos') && has_key(w:vinegar_lastpos, b:netrw_curdir)
+    keepj call netrw#NetrwRestorePosn(w:vinegar_lastpos[b:netrw_curdir])
   endif
 endfunction
 
 augroup vinegar
   autocmd!
+  " XXX This gets triggered TWICE upon opening a buffer!
   autocmd FileType netrw call s:setup_vinegar()
-  autocmd BufRead * :if &filetype != 'netrw'|let w:dirstack = []|endif
 augroup END
 
 function! s:escaped(first, last) abort
@@ -80,9 +63,15 @@ function! s:escaped(first, last) abort
 endfunction
 
 function! s:setup_vinegar() abort
-  nmap <buffer> <C-^> :keepalt edit #<CR>
-  nmap <buffer> <C-O> :keepalt normal! <C-O><CR>:let w:dirstack = []<CR>
-  nmap <buffer> <C-I> :keepalt normal! <C-I><CR>:let w:dirstack = []<CR>
+  augroup vinegar
+    autocmd! BufLeave <buffer> call s:SavePosn()
+    " Adding a ! here will prevent <CR> from restoring position.
+    " Having the call to s:RestorePosn() here is better than in the <CR>
+    " mapping, since it will work even if the buffer gets opened with :b
+    autocmd BufEnter <buffer> call s:RestorePosn()
+  augroup END
+  nmap <buffer> <silent> <C-^> :keepalt edit #<CR>
+  nmap <buffer> <silent> <C-O> :keepalt normal! <C-O><CR>:call <SID>RestorePosn()<CR>
   nmap <buffer> <silent> - :call <SID>VinegarUp()<CR>
   nmap <buffer> <silent> <CR> :call <SID>VinegarDown()<CR>
   nnoremap <buffer> ~ :keepalt edit ~/<CR>
