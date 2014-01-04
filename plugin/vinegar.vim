@@ -81,9 +81,11 @@ endfunction
 
 function! s:setup_vinegar() abort
   nmap <buffer> <C-^> :keepalt edit #<CR>
+  nmap <buffer> <C-O> :keepalt normal! <C-O><CR>:let w:dirstack = []<CR>
+  nmap <buffer> <C-I> :keepalt normal! <C-I><CR>:let w:dirstack = []<CR>
   nmap <buffer> <silent> - :call <SID>VinegarUp()<CR>
   nmap <buffer> <silent> <CR> :call <SID>VinegarDown()<CR>
-  nnoremap <buffer> ~ :edit ~/<CR>
+  nnoremap <buffer> ~ :keepalt edit ~/<CR>
   nnoremap <buffer> . :<C-U> <C-R>=<SID>escaped(line('.'), line('.') - 1 + v:count1)<CR><Home>
   xnoremap <buffer> . <Esc>: <C-R>=<SID>escaped(line("'<"), line("'>"))<CR><Home>
   nmap <buffer> ! .!
