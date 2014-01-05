@@ -20,19 +20,38 @@ let g:netrw_sort_sequence = '[\/]$,*,\%(' . join(map(split(&suffixes, ','), s:es
 let g:netrw_list_hide = join(map(split(&wildignore, ','), '"^".' . s:escape . '. "$"'), ',') . ',^\.\.\=/\=$'
 let g:netrw_banner = 0
 
-nnoremap <silent> <Plug>VinegarUp :if empty(expand('%'))<Bar>edit .<Bar>else<Bar>edit %:h<Bar>call <SID>seek(expand('%:t'))<Bar>endif<CR>
-if empty(maparg('-', 'n'))
-  nmap - <Plug>VinegarUp
-endif
+nmap <silent> <unique> - :call <SID>VinegarUp()<CR>
 
-function! s:seek(file)
-  let pattern = '^'.escape(expand('#:t'), '.*[]~\').'[/*|@=]\=\%($\|\t\)'
-  call search(pattern, 'wc')
-  return pattern
+function! s:VinegarUp()
+  let l:oldpwd = exists('b:netrw_curdir') ? b:netrw_curdir : expand('%')
+  let l:keepalt = (&filetype == 'netrw' || empty(expand('%'))) ? 'keepalt ' : ''
+  execute l:keepalt .'edit '. fnameescape(fnamemodify(expand('%'), ':h'))
+  let l:pattern = '^'.escape(fnamemodify(l:oldpwd, ':t'), '.*[]~\').'[/*|@=]\=\%($\|\t\)'
+  call search(l:pattern, 'wc')
+endfunction
+
+function! s:VinegarDown()
+  execute 'keepalt edit '. fnameescape(s:escaped(line('.'), line('.')))
+endfunction
+
+function s:SavePosn()
+  if !exists('w:vinegar_lastpos')
+    let w:vinegar_lastpos = {}
+  endif
+  if &filetype == 'netrw'
+    let w:vinegar_lastpos[b:netrw_curdir] = netrw#NetrwSavePosn()
+  endif
+endfunction
+
+function! s:RestorePosn()
+  if &filetype == 'netrw' && exists('w:vinegar_lastpos') && has_key(w:vinegar_lastpos, b:netrw_curdir)
+    keepj call netrw#NetrwRestorePosn(w:vinegar_lastpos[b:netrw_curdir])
+  endif
 endfunction
 
 augroup vinegar
   autocmd!
+  " XXX This gets triggered TWICE upon opening a buffer!
   autocmd FileType netrw call s:setup_vinegar()
 augroup END
 
@@ -44,8 +63,18 @@ function! s:escaped(first, last) abort
 endfunction
 
 function! s:setup_vinegar() abort
-  nmap <buffer> - <Plug>VinegarUp
-  nnoremap <buffer> ~ :edit ~/<CR>
+  augroup vinegar
+    autocmd! BufLeave <buffer> call s:SavePosn()
+    " Adding a ! here will prevent <CR> from restoring position.
+    " Having the call to s:RestorePosn() here is better than in the <CR>
+    " mapping, since it will work even if the buffer gets opened with :b
+    autocmd BufEnter <buffer> call s:RestorePosn()
+  augroup END
+  nmap <buffer> <silent> <C-^> :keepalt edit #<CR>
+  nmap <buffer> <silent> <C-O> :keepalt normal! <C-O><CR>:call <SID>RestorePosn()<CR>
+  nmap <buffer> <silent> - :call <SID>VinegarUp()<CR>
+  nmap <buffer> <silent> <CR> :call <SID>VinegarDown()<CR>
+  nnoremap <buffer> ~ :keepalt edit ~/<CR>
   nnoremap <buffer> . :<C-U> <C-R>=<SID>escaped(line('.'), line('.') - 1 + v:count1)<CR><Home>
   xnoremap <buffer> . <Esc>: <C-R>=<SID>escaped(line("'<"), line("'>"))<CR><Home>
   nmap <buffer> ! .!
