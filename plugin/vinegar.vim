@@ -14,9 +14,8 @@ function! s:fnameescape(file) abort
   endif
 endfunction
 
-let s:hide = ',\(^\|\s\s\)\zs\.\S\+'
-let s:escape = 'substitute(escape(v:val, ".*$~"), "*", ".*", "g")'
-let g:netrw_sort_sequence = '[\/]$,*,\%(' . join(map(split(&suffixes, ','), s:escape), '\|') . '\)[*@]\=$'
+let g:netrw_sort_sequence = '[\/]$,*,\%(' . join(map(split(&suffixes, ','), 'escape(v:val, ".*$~")'), '\|') . '\)[*@]\=$'
+let s:escape = 'substitute(escape(v:val, ".$~"), "*", ".*", "g")'
 let g:netrw_list_hide = join(map(split(&wildignore, ','), '"^".' . s:escape . '. "$"'), ',') . ',^\.\.\=/\=$'
 let g:netrw_banner = 0
 
