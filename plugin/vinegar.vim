@@ -19,13 +19,25 @@ let s:escape = 'substitute(escape(v:val, ".$~"), "*", ".*", "g")'
 let g:netrw_list_hide = join(map(split(&wildignore, ','), '"^".' . s:escape . '. "$"'), ',') . ',^\.\.\=/\=$'
 let g:netrw_banner = 0
 
-nnoremap <silent> <Plug>VinegarUp :if empty(expand('%'))<Bar>edit .<Bar>else<Bar>edit %:h<Bar>call <SID>seek(expand('%:t'))<Bar>endif<CR>
+nnoremap <silent> <Plug>VinegarUp :call <SID>opendir('edit')<CR>
 if empty(maparg('-', 'n'))
   nmap - <Plug>VinegarUp
 endif
 
+nnoremap <silent> <Plug>VinegarSplitUp :call <SID>opendir('split')<CR>
+nnoremap <silent> <Plug>VinegarVerticalSplitUp :call <SID>opendir('vsplit')<CR>
+
+function! s:opendir(cmd)
+  if empty(expand('%'))
+    execute a:cmd '.'
+  else
+    execute a:cmd '%:h'
+    call s:seek(expand('#:t'))
+  endif
+endfunction
+
 function! s:seek(file)
-  let pattern = '^'.escape(expand('#:t'), '.*[]~\').'[/*|@=]\=\%($\|\t\)'
+  let pattern = '^'.escape(a:file, '.*[]~\').'[/*|@=]\=\%($\|\t\)'
   call search(pattern, 'wc')
   return pattern
 endfunction
