@@ -18,6 +18,7 @@ let g:netrw_sort_sequence = '[\/]$,*,\%(' . join(map(split(&suffixes, ','), 'esc
 let s:escape = 'substitute(escape(v:val, ".$~"), "*", ".*", "g")'
 let g:netrw_list_hide = join(map(split(&wildignore, ','), '"^".' . s:escape . '. "$"'), ',') . ',^\.\.\=/\=$'
 let g:netrw_banner = 0
+let s:netrw_up = ''
 
 nnoremap <silent> <Plug>VinegarUp :call <SID>opendir('edit')<CR>
 if empty(maparg('-', 'n'))
@@ -28,11 +29,17 @@ nnoremap <silent> <Plug>VinegarSplitUp :call <SID>opendir('split')<CR>
 nnoremap <silent> <Plug>VinegarVerticalSplitUp :call <SID>opendir('vsplit')<CR>
 
 function! s:opendir(cmd)
-  if empty(expand('%'))
-    execute a:cmd '.'
+  if &filetype ==# 'netrw'
+    let currdir = fnamemodify(b:netrw_curdir, ':t')
+    execute s:netrw_up
+    call <SID>seek(currdir)
   else
-    execute a:cmd '%:h'
-    call s:seek(expand('#:t'))
+    if empty(expand('%'))
+      execute a:cmd '.'
+    else
+      execute a:cmd '%:h'
+      call s:seek(expand('#:t'))
+    endif
   endif
 endfunction
 
@@ -55,6 +62,14 @@ function! s:escaped(first, last) abort
 endfunction
 
 function! s:setup_vinegar() abort
+  if empty(s:netrw_up)
+    " save netrw mapping
+    let s:netrw_up = maparg('-', 'n')
+    " saved string is like this:
+    " :exe "norm! 0"|call netrw#LocalBrowseCheck(<SNR>172_NetrwBrowseChgDir(1,'../'))<CR>
+    " remove <CR> at the end (otherwise raises "E488: Trailing characters")
+    let s:netrw_up = strpart(s:netrw_up, 0, strlen(s:netrw_up)-4)
+  endif
   nmap <buffer> - <Plug>VinegarUp
   nnoremap <buffer> ~ :edit ~/<CR>
   nnoremap <buffer> . :<C-U> <C-R>=<SID>escaped(line('.'), line('.') - 1 + v:count1)<CR><Home>
