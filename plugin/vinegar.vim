@@ -6,6 +6,10 @@ if exists("g:loaded_vinegar") || v:version < 700 || &cp
 endif
 let g:loaded_vinegar = 1
 
+if !exists("g:vinegar_ignore")
+  let g:vinegar_ignore = ""
+endif
+
 function! s:fnameescape(file) abort
   if exists('*fnameescape')
     return fnameescape(a:file)
@@ -16,7 +20,8 @@ endfunction
 
 let g:netrw_sort_sequence = '[\/]$,*,\%(' . join(map(split(&suffixes, ','), 'escape(v:val, ".*$~")'), '\|') . '\)[*@]\=$'
 let s:escape = 'substitute(escape(v:val, ".$~"), "*", ".*", "g")'
-let g:netrw_list_hide = join(map(split(&wildignore, ','), '"^".' . s:escape . '. "$"'), ',') . ',^\.\.\=/\=$'
+let s:hide_list = split(&wildignore, ',') + split(g:vinegar_ignore, ',')
+let g:netrw_list_hide = join(map(s:hide_list, '"^".' . s:escape . '. "$"'), ',') . ',^\.\.\=/\=$'
 let g:netrw_banner = 0
 let s:netrw_up = ''
 
