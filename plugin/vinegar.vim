@@ -14,6 +14,8 @@ function! s:fnameescape(file) abort
   endif
 endfunction
 
+let s:dotfiles = ',\(^\|\s\s\)\zs\.\S\+'
+
 let g:netrw_sort_sequence = '[\/]$,*,\%(' . join(map(split(&suffixes, ','), 'escape(v:val, ".*$~")'), '\|') . '\)[*@]\=$'
 let s:escape = 'substitute(escape(v:val, ".$~"), "*", ".*", "g")'
 let g:netrw_list_hide = join(map(split(&wildignore, ','), '"^".' . s:escape . '. "$"'), ',') . ',^\.\.\=/\=$'
@@ -29,6 +31,9 @@ nnoremap <silent> <Plug>VinegarSplitUp :call <SID>opendir('split')<CR>
 nnoremap <silent> <Plug>VinegarVerticalSplitUp :call <SID>opendir('vsplit')<CR>
 
 function! s:opendir(cmd)
+  if expand('%:t')[0] ==# '.' && g:netrw_list_hide[-strlen(s:dotfiles):-1] ==# s:dotfiles
+    let g:netrw_list_hide = g:netrw_list_hide[0 : -strlen(s:dotfiles)-1]
+  endif
   if &filetype ==# 'netrw'
     let currdir = fnamemodify(b:netrw_curdir, ':t')
     execute s:netrw_up
