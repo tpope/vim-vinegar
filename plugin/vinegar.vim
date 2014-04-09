@@ -89,3 +89,31 @@ function! s:setup_vinegar() abort
   exe 'syn match netrwSuffixes =\%(\S\+ \)*\S\+\%('.join(map(split(&suffixes, ','), s:escape), '\|') . '\)[*@]\=\S\@!='
   hi def link netrwSuffixes SpecialKey
 endfunction
+
+
+nnoremap <silent> <Plug>ToggleVinegar :call <SID>ToggleVinegar()<CR>
+
+function! s:StartVinegar()
+  exec "1wincmd w"
+  exec "normal \<Plug>VinegarVerticalSplitUp"
+  vertical resize -10
+  let t:expl_buf_num = bufnr("%")
+endfunction
+
+function! s:KillIfNetrwBuffer()
+  if &filetype ==# "netrw"
+    wincmd c
+    return 1
+  else
+    return 0
+  endif
+endfunction
+
+function! s:ToggleVinegar()
+  let NumberOfNetrwWindows = 0
+  windo let NumberOfNetrwWindows += s:KillIfNetrwBuffer()
+  if NumberOfNetrwWindows == 0
+     call s:StartVinegar()
+  endif
+endfunction
+
