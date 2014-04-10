@@ -27,7 +27,7 @@ to even consider.
   This is great, for example, to quickly initiate a `:grep` of the file or
   directory under the cursor.  There's also `!`, which starts the line off
   with a bang.  Type `!chmod +x` and get `:!chmod +x path/to/file`.
-* Press `cd` or `cl` to `:cd` or `:lcd` to the currently edited directory.
+* Press `cg` or `cl` to `:cd` or `:lcd` to the currently edited directory.
 * Press `~` to go home.
 
 ## Installation
