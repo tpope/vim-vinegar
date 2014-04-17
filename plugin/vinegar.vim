@@ -35,7 +35,7 @@ nnoremap <silent> <Plug>VinegarTabUp :call <SID>opendir('tabedit')<CR>
 nnoremap <silent> <Plug>VinegarSplitUp :call <SID>opendir('split')<CR>
 nnoremap <silent> <Plug>VinegarVerticalSplitUp :call <SID>opendir('vsplit')<CR>
 
-function! s:opendir(cmd)
+function! s:opendir(cmd) abort
   let df = ','.s:dotfiles
   if expand('%:t')[0] ==# '.' && g:netrw_list_hide[-strlen(df):-1] ==# df
     let g:netrw_list_hide = g:netrw_list_hide[0 : -strlen(df)-1]
@@ -54,7 +54,7 @@ function! s:opendir(cmd)
   endif
 endfunction
 
-function! s:seek(file)
+function! s:seek(file) abort
   let pattern = '^\%(| \)*'.escape(a:file, '.*[]~\').'[/*|@=]\=\%($\|\t\)'
   call search(pattern, 'wc')
   return pattern
