@@ -40,7 +40,7 @@ function! s:opendir(cmd)
   if &filetype ==# 'netrw'
     let currdir = fnamemodify(b:netrw_curdir, ':t')
     execute s:netrw_up
-    call <SID>seek(currdir)
+    call s:seek(currdir)
   else
     if empty(expand('%'))
       execute a:cmd '.'
