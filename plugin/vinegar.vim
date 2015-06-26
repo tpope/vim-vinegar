@@ -46,7 +46,7 @@ function! s:opendir(cmd)
     if empty(expand('%'))
       execute a:cmd '.'
     else
-      execute a:cmd '%:h/'
+      execute a:cmd '%:h'
       call s:seek(expand('#:t'))
     endif
   endif
