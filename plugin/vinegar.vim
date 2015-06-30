@@ -21,7 +21,9 @@ let s:escape = 'substitute(escape(v:val, ".$~"), "*", ".*", "g")'
 let g:netrw_list_hide =
       \ join(map(split(&wildignore, ','), '"^".' . s:escape . '. "$"'), ',') . ',^\.\.\=/\=$' .
       \ (get(g:, 'netrw_list_hide', '')[-strlen(s:dotfiles)-1:-1] ==# s:dotfiles ? ','.s:dotfiles : '')
-let g:netrw_banner = 0
+if !exists("g:netrw_banner")
+  let g:netrw_banner = 0
+endif
 let s:netrw_up = ''
 
 nnoremap <silent> <Plug>VinegarUp :call <SID>opendir('edit')<CR>
