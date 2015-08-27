@@ -89,6 +89,7 @@ function! s:setup_vinegar() abort
   xmap <buffer> ! .!
   nnoremap <buffer> <silent> cg :exe 'keepjumps cd ' .<SID>fnameescape(b:netrw_curdir)<CR>
   nnoremap <buffer> <silent> cl :exe 'keepjumps lcd '.<SID>fnameescape(b:netrw_curdir)<CR>
+  nnoremap <buffer> Q :Rexplore<CR>
   exe 'syn match netrwSuffixes =\%(\S\+ \)*\S\+\%('.join(map(split(&suffixes, ','), s:escape), '\|') . '\)[*@]\=\S\@!='
   hi def link netrwSuffixes SpecialKey
 endfunction
