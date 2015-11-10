@@ -55,7 +55,11 @@ function! s:opendir(cmd) abort
 endfunction
 
 function! s:seek(file) abort
-  let pattern = '^\%(| \)*'.escape(a:file, '.*[]~\').'[/*|@=]\=\%($\|\t\)'
+  if get(b:, 'netrw_liststyle') == 2
+    let pattern = '\%(^\|\s\+\)\zs'.escape(a:file, '.*[]~\').'[/*|@=]\=\%($\|\s\+\)'
+  else
+    let pattern = '^\%(| \)*'.escape(a:file, '.*[]~\').'[/*|@=]\=\%($\|\t\)'
+  endif
   call search(pattern, 'wc')
   return pattern
 endfunction
