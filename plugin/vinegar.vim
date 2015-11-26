@@ -31,9 +31,19 @@ if empty(maparg('-', 'n'))
   nmap - <Plug>VinegarUp
 endif
 
+
 nnoremap <silent> <Plug>VinegarTabUp :call <SID>opendir('tabedit')<CR>
 nnoremap <silent> <Plug>VinegarSplitUp :call <SID>opendir('split')<CR>
 nnoremap <silent> <Plug>VinegarVerticalSplitUp :call <SID>opendir('vsplit')<CR>
+nnoremap <silent> <Plug>Terminal :call <SID>openterm()<CR>
+
+function! s:openterm() abort
+  let currdir = getcwd()
+  let netrwdir = fnamemodify(b:netrw_curdir, ':t')
+  execute 'lcd '.netrwdir
+  execute 'terminal'
+  execute 'lcd '.currdir
+endfunction
 
 function! s:opendir(cmd) abort
   let df = ','.s:dotfiles
@@ -44,6 +54,8 @@ function! s:opendir(cmd) abort
     let currdir = fnamemodify(b:netrw_curdir, ':t')
     execute s:netrw_up
     call s:seek(currdir)
+  elseif &buftype ==# 'terminal'
+    execute a:cmd getcwd()
   else
     if empty(expand('%'))
       execute a:cmd '.'
@@ -86,6 +98,9 @@ function! s:setup_vinegar() abort
     let s:netrw_up = strpart(s:netrw_up, 0, strlen(s:netrw_up)-4)
   endif
   nmap <buffer> - <Plug>VinegarUp
+  if has('nvim')
+    nmap <buffer> T <Plug>Terminal
+  endif
   nnoremap <buffer> ~ :edit ~/<CR>
   nnoremap <buffer> . :<C-U> <C-R>=<SID>escaped(line('.'), line('.') - 1 + v:count1)<CR><Home>
   xnoremap <buffer> . <Esc>: <C-R>=<SID>escaped(line("'<"), line("'>"))<CR><Home>
