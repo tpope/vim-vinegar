@@ -44,13 +44,11 @@ function! s:opendir(cmd) abort
     let currdir = fnamemodify(b:netrw_curdir, ':t')
     execute s:netrw_up
     call s:seek(currdir)
+  elseif expand('%') =~# '^$\|^term:[\/][\/]'
+    execute a:cmd '.'
   else
-    if empty(expand('%'))
-      execute a:cmd '.'
-    else
-      execute a:cmd '%:h/'
-      call s:seek(expand('#:t'))
-    endif
+    execute a:cmd '%:h/'
+    call s:seek(expand('#:t'))
   endif
 endfunction
 
