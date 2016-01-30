@@ -77,7 +77,7 @@ endfunction
 function! s:setup_vinegar() abort
   if empty(s:netrw_up)
     " save netrw mapping
-    let s:netrw_up = maparg('-', 'n')
+    let s:netrw_up = substitute(maparg('-', 'n'), '\c^:\%(<c-u>\)\=', '', '')
     " saved string is like this:
     " :exe "norm! 0"|call netrw#LocalBrowseCheck(<SNR>172_NetrwBrowseChgDir(1,'../'))<CR>
     " remove <CR> at the end (otherwise raises "E488: Trailing characters")
