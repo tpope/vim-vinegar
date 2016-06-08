@@ -31,7 +31,9 @@ let s:escape = 'substitute(escape(v:val, ".$~"), "*", ".*", "g")'
 let g:netrw_list_hide =
       \ join(map(split(&wildignore, ','), '"^".' . s:escape . '. "$"'), ',') . ',^\.\.\=/\=$' .
       \ (get(g:, 'netrw_list_hide', '')[-strlen(s:dotfiles)-1:-1] ==# s:dotfiles ? ','.s:dotfiles : '')
-let g:netrw_banner = 0
+if !exists("g:netrw_banner")
+  let g:netrw_banner = 0
+endif
 let s:netrw_up = ''
 let s:netrw_sort_options_set = 0
 
@@ -40,10 +42,11 @@ if empty(maparg('-', 'n'))
   nmap - <Plug>VinegarUp
 endif
 
+nnoremap <silent> <Plug>VinegarTabUp :call <SID>opendir('tabedit')<CR>
 nnoremap <silent> <Plug>VinegarSplitUp :call <SID>opendir('split')<CR>
 nnoremap <silent> <Plug>VinegarVerticalSplitUp :call <SID>opendir('vsplit')<CR>
 
-function! s:opendir(cmd)
+function! s:opendir(cmd) abort
   let df = ','.s:dotfiles
   if expand('%:t')[0] ==# '.' && g:netrw_list_hide[-strlen(df):-1] ==# df
     let g:netrw_list_hide = g:netrw_list_hide[0 : -strlen(df)-1]
@@ -52,18 +55,20 @@ function! s:opendir(cmd)
     let currdir = fnamemodify(b:netrw_curdir, ':t')
     execute s:netrw_up
     call s:seek(currdir)
+  elseif expand('%') =~# '^$\|^term:[\/][\/]'
+    execute a:cmd '.'
   else
-    if empty(expand('%'))
-      execute a:cmd '.'
-    else
-      execute a:cmd '%:h'
-      call s:seek(expand('#:t'))
-    endif
+    execute a:cmd '%:h/'
+    call s:seek(expand('#:t'))
   endif
 endfunction
 
-function! s:seek(file)
-  let pattern = '^\%(| \)*'.escape(a:file, '.*[]~\').'[/*|@=]\=\%($\|\t\)'
+function! s:seek(file) abort
+  if get(b:, 'netrw_liststyle') == 2
+    let pattern = '\%(^\|\s\+\)\zs'.escape(a:file, '.*[]~\').'[/*|@=]\=\%($\|\s\+\)'
+  else
+    let pattern = '^\%(| \)*'.escape(a:file, '.*[]~\').'[/*|@=]\=\%($\|\t\)'
+  endif
   call search(pattern, 'wc')
   return pattern
 endfunction
@@ -83,7 +88,7 @@ endfunction
 function! s:setup_vinegar() abort
   if empty(s:netrw_up)
     " save netrw mapping
-    let s:netrw_up = maparg('-', 'n')
+    let s:netrw_up = substitute(maparg('-', 'n'), '\c^:\%(<c-u>\)\=', '', '')
     " saved string is like this:
     " :exe "norm! 0"|call netrw#LocalBrowseCheck(<SNR>172_NetrwBrowseChgDir(1,'../'))<CR>
     " remove <CR> at the end (otherwise raises "E488: Trailing characters")
