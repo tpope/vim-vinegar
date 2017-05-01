@@ -87,6 +87,7 @@ function! s:setup_vinegar() abort
   nnoremap <buffer> ~ :edit ~/<CR>
   nnoremap <buffer> . :<C-U> <C-R>=<SID>escaped(line('.'), line('.') - 1 + v:count1)<CR><Home>
   xnoremap <buffer> . <Esc>: <C-R>=<SID>escaped(line("'<"), line("'>"))<CR><Home>
+  nnoremap <buffer> yy :<C-U> let @*="<C-R>=<SID>escaped(line('.'), line('.') - 1 + v:count1)<CR>\n"<Home><CR>
   nmap <buffer> ! .!
   xmap <buffer> ! .!
   nnoremap <buffer> <silent> cg :exe 'keepjumps cd ' .<SID>fnameescape(b:netrw_curdir)<CR>
