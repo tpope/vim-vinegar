@@ -75,6 +75,7 @@ function! s:escaped(first, last) abort
 endfunction
 
 function! s:setup_vinegar() abort
+  let b:last_buf = bufnr('#')
   if empty(s:netrw_up)
     " save netrw mapping
     let s:netrw_up = substitute(maparg('-', 'n'), '\c^:\%(<c-u>\)\=', '', '')
@@ -84,6 +85,7 @@ function! s:setup_vinegar() abort
     let s:netrw_up = strpart(s:netrw_up, 0, strlen(s:netrw_up)-4)
   endif
   nmap <buffer> - <Plug>VinegarUp
+  nmap <buffer> <Esc> :b<C-R>=b:last_buf<CR><CR>
   nnoremap <buffer> ~ :edit ~/<CR>
   nnoremap <buffer> . :<C-U> <C-R>=<SID>escaped(line('.'), line('.') - 1 + v:count1)<CR><Home>
   xnoremap <buffer> . <Esc>: <C-R>=<SID>escaped(line("'<"), line("'>"))<CR><Home>
