@@ -67,11 +67,32 @@ augroup vinegar
   autocmd FileType netrw call s:setup_vinegar()
 augroup END
 
-function! s:escaped(first, last) abort
-  let files = getline(a:first, a:last)
+function! s:slash() abort
+  return !exists("+shellslash") || &shellslash ? '/' : '\'
+endfunction
+
+function! s:absolutes(first, ...) abort
+  let files = getline(a:first, a:0 ? a:1 : a:first)
   call filter(files, 'v:val !~# "^\" "')
-  call map(files, 'substitute(v:val, "[/*|@=]\\=\\%(\\t.*\\)\\=$", "", "")')
-  return join(map(files, 'fnamemodify(b:netrw_curdir."/".v:val,":~:.")'), ' ')
+  call map(files, 'b:netrw_curdir . s:slash() . substitute(v:val, "[/*|@=]\\=\\%(\\t.*\\)\\=$", "", "")')
+  return files
+endfunction
+
+function! s:relatives(first, ...) abort
+  let files = s:absolutes(a:first, a:0 ? a:1 : a:first)
+  call filter(files, 'v:val !~# "^\" "')
+  for i in range(len(files))
+    let relative = fnamemodify(files[i], ':.')
+    if relative !=# files[i]
+      let files[i] = '.' . s:slash() . relative
+    endif
+  endfor
+  return files
+endfunction
+
+function! s:escaped(first, last) abort
+  let files = s:relatives(a:first, a:last)
+  return join(map(files, 'fnameescape(v:val)'), ' ')
 endfunction
 
 function! s:setup_vinegar() abort
@@ -84,6 +105,10 @@ function! s:setup_vinegar() abort
     let s:netrw_up = strpart(s:netrw_up, 0, strlen(s:netrw_up)-4)
   endif
   nmap <buffer> - <Plug>VinegarUp
+  cnoremap <buffer><expr> <Plug><cfile> get(<SID>relatives('.'),0,"\022\006")
+  if empty(maparg('<C-R><C-F>', 'c'))
+    cmap <buffer> <C-R><C-F> <Plug><cfile>
+  endif
   nnoremap <buffer> ~ :edit ~/<CR>
   nnoremap <buffer> . :<C-U> <C-R>=<SID>escaped(line('.'), line('.') - 1 + v:count1)<CR><Home>
   xnoremap <buffer> . <Esc>: <C-R>=<SID>escaped(line("'<"), line("'>"))<CR><Home>
