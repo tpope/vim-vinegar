@@ -1,7 +1,7 @@
 # vinegar.vim
 
 > Split windows and the project drawer go together like oil and vinegar. I
-> don't mean to say that you can combine them to create a delicious salad
+> don't mean to say that you can't combine them to create a delicious salad
 > dressing. I mean that they don't mix well!
 > - Drew Neil
 
