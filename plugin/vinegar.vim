@@ -1,4 +1,4 @@
-" vinegar.vim - combine with netrw to create a delicious salad dressing
+" Location:     plugin/vinegar.vim
 " Maintainer:   Tim Pope <http://tpo.pe/>
 
 if exists("g:loaded_vinegar") || v:version < 700 || &cp
