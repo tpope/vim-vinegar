@@ -95,6 +95,16 @@ function! s:escaped(first, last) abort
   return join(map(files, 'fnameescape(v:val)'), ' ')
 endfunction
 
+function! s:graceful_exit()
+    let netrw_bufnum = bufnr("%")
+    try
+        execute ":b#"
+    catch /E85:/
+    endtry
+    " execute ":bwipe"
+    execute ":bwipe " . string(netrw_bufnum)
+endfunction
+
 function! s:setup_vinegar() abort
   if empty(s:netrw_up)
     " save netrw mapping
@@ -121,4 +131,7 @@ function! s:setup_vinegar() abort
   nnoremap <buffer> <silent> cl :exe 'keepjumps lcd '.<SID>fnameescape(b:netrw_curdir)<CR>
   exe 'syn match netrwSuffixes =\%(\S\+ \)*\S\+\%('.join(map(split(&suffixes, ','), s:escape), '\|') . '\)[*@]\=\S\@!='
   hi def link netrwSuffixes SpecialKey
+  if !exists("g:vinegar_preserve_splits_on_close") || g:vinegar_preserve_splits_on_close
+    nnoremap <buffer> <silent> <ESC> :call <SID>graceful_exit()<CR>
+  endif
 endfunction
