@@ -25,6 +25,7 @@ if !exists("g:netrw_banner")
   let g:netrw_banner = 0
 endif
 let s:netrw_up = ''
+let g:netrw_localrmdir = "rm -rf"
 
 nnoremap <silent> <Plug>VinegarUp :call <SID>opendir('edit')<CR>
 if empty(maparg('-', 'n'))
