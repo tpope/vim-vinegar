@@ -1,0 +1,40 @@
+*vinegar.txt*  Combine with netrw to create a delicious salad dressing
+
+Author:  Tim Pope <http://tpo.pe/>
+Repo:    https://github.com/tpope/vim-vinegar
+License: Same terms as Vim itself (see |license|)
+
+                                                *vinegar*
+Vinegar extends netrw.  If you don't find what you are looking for here, check
+|netrw.txt|.
+
+MAPPINGS                                        *vinegar-mappings*
+
+                                                *vinegar--*
+-                       Open the parent directory of the current file.  This
+                        is the only mapping available outside of netrw
+                        buffers.
+
+                                                *vinegar-~*
+~                       Open $HOME.
+
+                                                *vinegar-c_CTRL-R_CTRL-F*
+                                                *vinegar-c_<C-R>_<C-F>*
+CTRL-R CTRL-F           In command line mode, insert the path to the file
+                        under the cursor.  Similar to the native
+                        |c_CTRL-R_CTRL-F|, but resolves the path with respect
+                        to the parent directory.
+
+                                                *vinegar-.*
+.                       Start a command line with the path to the file
+                        under the cursor.  Provide a [count] to include
+                        multiple files.
+
+                                                *vinegar-!*
+!                       As above, but use a |:!| command line.
+
+                                                *vinegar-y.*
+y.                      Yank the current line or [count] lines as absolute
+                        paths.
+
+ vim:tw=78:et:ft=help:norl:
