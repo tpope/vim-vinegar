@@ -16,9 +16,19 @@ function! s:fnameescape(file) abort
   endif
 endfunction
 
-let s:dotfiles = '\(^\|\s\s\)\zs\.\S\+'
+if !exists("g:netrw_sort_sequence")
+  let g:netrw_sort_sequence = '*'
+endif
+if !get(g:, 'netrw_sort_dirs_first', 0)
+  let g:netrw_sort_sequence = '[\/]$,' . g:netrw_sort_sequence
+endif
+let g:netrw_sort_sequence .= ',\%(' . join(map(split(&suffixes, ','), 'escape(v:val, ".*$~")'), '\|') . '\)[*@]\=$'
 
-let g:netrw_sort_sequence = '[\/]$,*,\%(' . join(map(split(&suffixes, ','), 'escape(v:val, ".*$~")'), '\|') . '\)[*@]\=$'
+let s:dotfiles = '\(^\|\s\s\)\zs\.\S\+'
+if !exists("g:netrw_list_hide") && !exists("g:netrw_hide")
+  let g:netrw_list_hide = s:dotfiles
+  let g:netrw_hide = 0
+endif
 let s:escape = 'substitute(escape(v:val, ".$~"), "*", ".*", "g")'
 let g:netrw_list_hide =
       \ join(map(split(&wildignore, ','), '"^".' . s:escape . '. "/\\=$"'), ',') . ',^\.\.\=/\=$' .
@@ -27,6 +37,7 @@ if !exists("g:netrw_banner")
   let g:netrw_banner = 0
 endif
 let s:netrw_up = ''
+let s:netrw_sort_options_set = 0
 
 nnoremap <silent> <Plug>VinegarUp :call <SID>opendir('edit')<CR>
 if empty(maparg('-', 'n'))
@@ -125,5 +136,15 @@ function! s:setup_vinegar() abort
   nmap <buffer> ! .!
   xmap <buffer> ! .!
   exe 'syn match netrwSuffixes =\%(\S\+ \)*\S\+\%('.join(map(split(&suffixes, ','), s:escape), '\|') . '\)[*@]\=\S\@!='
+  if !s:netrw_sort_options_set
+    let g:netrw_sort_options = ''
+    if !get(g:, 'netrw_sort_case_sensitive', 0)
+      let g:netrw_sort_options .= 'i'
+    endif
+    if !get(g:, 'netrw_sort_dotfiles_first', 0)
+      let g:netrw_sort_options .= '/['.g:netrw_sepchr.'._]\+/'
+    endif
+    let s:netrw_sort_options_set = 1
+  endif
   hi def link netrwSuffixes SpecialKey
 endfunction
