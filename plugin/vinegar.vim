@@ -93,7 +93,7 @@ endfunction
 
 function! s:escaped(first, last) abort
   let files = s:relatives(a:first, a:last)
-  return join(map(files, 'fnameescape(v:val)'), ' ')
+  return join(map(files, 's:fnameescape(v:val)'), ' ')
 endfunction
 
 function! s:setup_vinegar() abort
