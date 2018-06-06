@@ -25,7 +25,6 @@ let g:netrw_list_hide =
 if !exists("g:netrw_banner")
   let g:netrw_banner = 0
 endif
-let s:netrw_up = ''
 
 nnoremap <silent> <Plug>VinegarUp :call <SID>opendir('edit')<CR>
 if empty(maparg('-', 'n'))
@@ -41,9 +40,9 @@ function! s:opendir(cmd) abort
   if expand('%:t')[0] ==# '.' && g:netrw_list_hide[-strlen(df):-1] ==# df
     let g:netrw_list_hide = g:netrw_list_hide[0 : -strlen(df)-1]
   endif
-  if &filetype ==# 'netrw'
+  if exists('b:netrw_curdir')
     let currdir = fnamemodify(b:netrw_curdir, ':t')
-    execute s:netrw_up
+    execute a:cmd s:fnameescape(fnamemodify(b:netrw_curdir, ':h'))
     call s:seek(currdir)
   elseif expand('%') =~# '^$\|^term:[\/][\/]'
     execute a:cmd '.'
@@ -97,19 +96,6 @@ function! s:escaped(first, last) abort
 endfunction
 
 function! s:setup_vinegar() abort
-  if empty(s:netrw_up)
-    " save netrw mapping
-    let s:netrw_up = maparg('-', 'n')
-    if s:netrw_up =~? "^<Plug>"
-      let s:netrw_up = "execute \"normal \\".s:netrw_up."\""
-    else
-      " saved string is like this:
-      " :exe "norm! 0"|call netrw#LocalBrowseCheck(<SNR>172_NetrwBrowseChgDir(1,'../'))<CR>
-      let s:netrw_up = substitute(s:netrw_up, '\c^:\%(<c-u>\)\=', '', '')
-      " remove <CR> at the end (otherwise raises "E488: Trailing characters")
-      let s:netrw_up = strpart(s:netrw_up, 0, strlen(s:netrw_up)-4)
-    endif
-  endif
   nmap <buffer> - <Plug>VinegarUp
   cnoremap <buffer><expr> <Plug><cfile> get(<SID>relatives('.'),0,"\022\006")
   if empty(maparg('<C-R><C-F>', 'c'))
