@@ -40,10 +40,10 @@ function! s:opendir(cmd) abort
   if expand('%:t')[0] ==# '.' && g:netrw_list_hide[-strlen(df):-1] ==# df
     let g:netrw_list_hide = g:netrw_list_hide[0 : -strlen(df)-1]
   endif
-  if exists('b:netrw_curdir')
-    let currdir = fnamemodify(b:netrw_curdir, ':t')
+  if &filetype ==# 'netrw' && exists('b:netrw_curdir')
+    let curdir = fnamemodify(b:netrw_curdir, ':t')
     execute a:cmd s:fnameescape(fnamemodify(b:netrw_curdir, ':h'))
-    call s:seek(currdir)
+    call s:seek(curdir)
   elseif expand('%') =~# '^$\|^term:[\/][\/]'
     execute a:cmd '.'
   else
