@@ -25,6 +25,7 @@ let g:netrw_list_hide =
 if !exists("g:netrw_banner")
   let g:netrw_banner = 0
 endif
+unlet! s:netrw_up
 
 nnoremap <silent> <Plug>VinegarUp :call <SID>opendir('edit')<CR>
 if empty(maparg('-', 'n'))
@@ -40,10 +41,10 @@ function! s:opendir(cmd) abort
   if expand('%:t')[0] ==# '.' && g:netrw_list_hide[-strlen(df):-1] ==# df
     let g:netrw_list_hide = g:netrw_list_hide[0 : -strlen(df)-1]
   endif
-  if &filetype ==# 'netrw' && exists('b:netrw_curdir')
-    let curdir = fnamemodify(b:netrw_curdir, ':t')
-    execute a:cmd s:fnameescape(fnamemodify(b:netrw_curdir, ':h'))
-    call s:seek(curdir)
+  if &filetype ==# 'netrw' && len(s:netrw_up)
+    let basename = fnamemodify(b:netrw_curdir, ':t')
+    execute s:netrw_up
+    call s:seek(basename)
   elseif expand('%') =~# '^$\|^term:[\/][\/]'
     execute a:cmd '.'
   else
@@ -96,6 +97,17 @@ function! s:escaped(first, last) abort
 endfunction
 
 function! s:setup_vinegar() abort
+  if !exists('s:netrw_up')
+    let orig = maparg('-', 'n')
+    if orig =~? '^<plug>'
+      let s:netrw_up = 'execute "normal \'.substitute(orig, ' *$', '', '').'"'
+    elseif orig =~# '^:'
+      " :exe "norm! 0"|call netrw#LocalBrowseCheck(<SNR>123_NetrwBrowseChgDir(1,'../'))<CR>
+      let s:netrw_up = substitute(orig, '\c^:\%(<c-u>\)\=\|<cr>$', '', 'g')
+    else
+      let s:netrw_up = ''
+    endif
+  endif
   nmap <buffer> - <Plug>VinegarUp
   cnoremap <buffer><expr> <Plug><cfile> get(<SID>relatives('.'),0,"\022\006")
   if empty(maparg('<C-R><C-F>', 'c'))
