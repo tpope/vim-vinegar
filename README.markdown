@@ -41,6 +41,7 @@ If you don't have a preferred installation method, I recommend
 installing [pathogen.vim](https://github.com/tpope/vim-pathogen), and
 then simply copy and paste:
 
+    mkdir -p ~/.vim/bundle
     cd ~/.vim/bundle
     git clone https://github.com/tpope/vim-vinegar.git
 
