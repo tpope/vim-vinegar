@@ -37,12 +37,10 @@ to even consider.
 
 ## Installation
 
-If you don't have a preferred installation method, I recommend
-installing [pathogen.vim](https://github.com/tpope/vim-pathogen), and
-then simply copy and paste:
+Install using your favourite package manager, or use Vim's built-in package support:
 
-    mkdir -p ~/.vim/bundle
-    cd ~/.vim/bundle
+    mkdir -p ~/.vim/pack/tpope/start
+    cd ~/.vim/pack/tpope/start
     git clone https://github.com/tpope/vim-vinegar.git
 
 ## Promotion
