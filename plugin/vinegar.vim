@@ -36,6 +36,11 @@ nnoremap <silent> <Plug>VinegarTabUp :call <SID>opendir('tabedit')<CR>
 nnoremap <silent> <Plug>VinegarSplitUp :call <SID>opendir('split')<CR>
 nnoremap <silent> <Plug>VinegarVerticalSplitUp :call <SID>opendir('vsplit')<CR>
 
+augroup Vinegar_redraw
+  autocmd!
+  autocmd OptionSet wildignore windo exe "norm \<c-l>"
+augroup END
+
 function! s:opendir(cmd) abort
   let df = ','.s:dotfiles
   if expand('%:t')[0] ==# '.' && g:netrw_list_hide[-strlen(df):-1] ==# df
@@ -97,6 +102,13 @@ function! s:escaped(first, last) abort
 endfunction
 
 function! s:setup_vinegar() abort
+  if exists("w:netrw_wigkeep")
+    let g:netrw_list_hide =
+            \ join(map(split(w:netrw_wigkeep, ','), '"^".' . s:escape . '. "$"'), ',') .
+            \ ',^\.\.\=/\=$' .
+            \ (get(g:, 'netrw_list_hide', '')[-strlen(s:dotfiles):-1] ==# s:dotfiles ? ','.s:dotfiles : '')
+  endif
+
   if !exists('s:netrw_up')
     let orig = maparg('-', 'n')
     if orig =~? '^<plug>'
