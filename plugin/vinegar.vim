@@ -28,13 +28,16 @@ endif
 unlet! s:netrw_up
 
 nnoremap <silent> <Plug>VinegarUp :call <SID>opendir('edit')<CR>
-if empty(mapcheck('-', 'n'))
-  nmap - <Plug>VinegarUp
-endif
-
 nnoremap <silent> <Plug>VinegarTabUp :call <SID>opendir('tabedit')<CR>
 nnoremap <silent> <Plug>VinegarSplitUp :call <SID>opendir('split')<CR>
 nnoremap <silent> <Plug>VinegarVerticalSplitUp :call <SID>opendir('vsplit')<CR>
+
+if empty(mapcheck('-', 'n')) && !hasmapto('<Plug>VinegarUp') &&
+      \                         !hasmapto('<Plug>VinegarSplitUp') &&
+      \                         !hasmapto('<Plug>VinegarVerticalSplitUp') &&
+      \                         !hasmapto('<Plug>VinegarTabUp')
+  nmap - <Plug>VinegarUp
+endif
 
 function! s:opendir(cmd) abort
   let df = ','.s:dotfiles
