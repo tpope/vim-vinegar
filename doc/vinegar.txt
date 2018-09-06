@@ -13,7 +13,13 @@ MAPPINGS                                        *vinegar-mappings*
                                                 *vinegar--*
 -                       Open the parent directory of the current file.  This
                         is the only mapping available outside of netrw
-                        buffers.
+                        buffers. If you have already mapped - to somthing else,
+                        you'll need to map one of these plugs:
+
+                        <Plug>VinegarUp
+                        <Plug>VinegarTabUp
+                        <Plug>VinegarSplitUp
+                        <Plug>VinegarVerticalSplitUp
 
                                                 *vinegar-~*
 ~                       Open $HOME.
