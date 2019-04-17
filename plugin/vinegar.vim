@@ -75,6 +75,7 @@ endfunction
 function! s:absolutes(first, ...) abort
   let files = getline(a:first, a:0 ? a:1 : a:first)
   call filter(files, 'v:val !~# "^\" "')
+  call map(files, "substitute(v:val, '^\\(| \\)*', '', '')")
   call map(files, 'b:netrw_curdir . s:slash() . substitute(v:val, "[/*|@=]\\=\\%(\\t.*\\)\\=$", "", "")')
   return files
 endfunction
