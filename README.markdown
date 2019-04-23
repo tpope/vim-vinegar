@@ -34,6 +34,7 @@ to even consider.
   with a bang.  Type `!chmod +x` and get `:!chmod +x path/to/file`.
 * Press `y.` to yank an absolute path for the file under the cursor.
 * Press `~` to go home.
+* Press `Ctrl + 6` (`Ctrl + ^`) for switching back to file from opened vinegar.
 
 ## Installation
 
