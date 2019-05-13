@@ -34,7 +34,8 @@ to even consider.
   with a bang.  Type `!chmod +x` and get `:!chmod +x path/to/file`.
 * Press `y.` to yank an absolute path for the file under the cursor.
 * Press `~` to go home.
-* Use Vim's built-in `CTRL-6` for switching back to file from opened vinegar.
+* Use Vim's built-in `CTRL-^` (`CTRL-6`) for switching back to the previous
+  buffer from the netrw buffer.
 
 ## Installation
 
