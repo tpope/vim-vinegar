@@ -27,14 +27,14 @@ if !exists("g:netrw_banner")
 endif
 unlet! s:netrw_up
 
-nnoremap <silent> <Plug>VinegarUp :call <SID>opendir('edit')<CR>
+nnoremap <silent> <Plug>VinegarUp :call <SID>opendir('Explore')<CR>
 if empty(maparg('-', 'n'))
   nmap - <Plug>VinegarUp
 endif
 
-nnoremap <silent> <Plug>VinegarTabUp :call <SID>opendir('tabedit')<CR>
-nnoremap <silent> <Plug>VinegarSplitUp :call <SID>opendir('split')<CR>
-nnoremap <silent> <Plug>VinegarVerticalSplitUp :call <SID>opendir('vsplit')<CR>
+nnoremap <silent> <Plug>VinegarTabUp :call <SID>opendir('Texplore')<CR>
+nnoremap <silent> <Plug>VinegarSplitUp :call <SID>opendir('Sexplore')<CR>
+nnoremap <silent> <Plug>VinegarVerticalSplitUp :call <SID>opendir('Vexplore')<CR>
 
 function! s:opendir(cmd) abort
   let df = ','.s:dotfiles
@@ -114,7 +114,7 @@ function! s:setup_vinegar() abort
   if empty(maparg('<C-R><C-F>', 'c'))
     cmap <buffer> <C-R><C-F> <Plug><cfile>
   endif
-  nnoremap <buffer> ~ :edit ~/<CR>
+  nnoremap <buffer> ~ :Explore ~/<CR>
   nnoremap <buffer> . :<C-U> <C-R>=<SID>escaped(line('.'), line('.') - 1 + v:count1)<CR><Home>
   xnoremap <buffer> . <Esc>: <C-R>=<SID>escaped(line("'<"), line("'>"))<CR><Home>
   if empty(mapcheck('y.', 'n'))
