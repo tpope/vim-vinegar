@@ -9,7 +9,7 @@
 vinegar.vim 就是用来强化 netrw 的插件。
 它尝试缓和多窗口与破坏性的 ["project drawer"][Oil and vinegar] 抽屉式项目菜单风格的插件间的冲突。
 
-[Oil and vinegar]: http://vimcasts.org/blog/2013/01/oil-and-vinegar-split-windows-and-project-drawer/ 水火不容
+[Oil and vinegar]（http://vimcasts.org/blog/2013/01/oil-and-vinegar-split-windows-and-project-drawer/） 水火不容
 
 vinegar.vim 的一些行为会是内置 netrw 的一个极佳的补充。
 很多插件的作者可能会拒绝评论，更多的人可能连想都没想过。
