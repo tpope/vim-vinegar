@@ -1,40 +1,35 @@
-*vinegar.txt*  Combine with netrw to create a delicious salad dressing
+*vinegar.txt*  给 netrw 一个更好的装扮
 
 Author:  Tim Pope <http://tpo.pe/>
 Repo:    https://github.com/tpope/vim-vinegar
 License: Same terms as Vim itself (see |license|)
 
                                                 *vinegar*
-Vinegar extends netrw.  If you don't find what you are looking for here, check
-|netrw.txt|.
+Vinegar 扩展了 netrw.  如果你在这里找不到想要的，, 试着去|netrw.txt| 看一下.
 
-MAPPINGS                                        *vinegar-mappings*
+映射                                        *vinegar-mappings*
 
                                                 *vinegar--*
--                       Open the parent directory of the current file.  This
-                        is the only mapping available outside of netrw
-                        buffers.
+-                       打开当前文件所在的文件夹。
+                        这是唯一一个在 netrw 缓冲区之外的按键。
 
                                                 *vinegar-~*
-~                       Open $HOME.
+~                       打开 $HOME.
 
                                                 *vinegar-c_CTRL-R_CTRL-F*
                                                 *vinegar-c_<C-R>_<C-F>*
-CTRL-R CTRL-F           In command line mode, insert the path to the file
-                        under the cursor.  Similar to the native
-                        |c_CTRL-R_CTRL-F|, but resolves the path with respect
-                        to the parent directory.
+CTRL-R CTRL-F           在命令行模式下，插入当前光标下的文件的路径.  和原生的
+                        |c_CTRL-R_CTRL-F| 一样, 但解决了父文件夹问题.
 
                                                 *vinegar-.*
-.                       Start a command line with the path to the file
-                        under the cursor.  Provide a [count] to include
-                        multiple files.
+.                       进入命令行模式，输入当前光标下文件的路径.  
+                        提供一个[count] 参数来处理多个文件.
 
                                                 *vinegar-!*
-!                       As above, but use a |:!| command line.
+!                       同上, 不过使用 |:!| 命令.
 
                                                 *vinegar-y.*
-y.                      Yank the current line or [count] lines as absolute
-                        paths.
+y.                      复制当前行或选中的多行文件、文件夹的绝对路径
+                        多行使用[count] 参数.
 
  vim:tw=78:et:ft=help:norl:
