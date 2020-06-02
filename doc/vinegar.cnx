@@ -5,13 +5,14 @@
 Author:  Tim Pope <http://tpo.pe/>
 Repo:    https://github.com/tpope/vim-vinegar
 License: Same terms as Vim itself (see |license|)
+
 ===============================================================================
-                                                                     *vinegar*
+
+netrw                                                                *vinegar*
 Vinegar 扩展了 netrw.  如果你在这里找不到想要的，, 试着去|netrw.txt| 看一下.
 
-===============================================================================
 
-映射                                                        *vinegar-mappings*
+映射                                                         *vinegar-mappings*
 
                                                                    *vinegar--*
 -减号                   打开当前文件所在的文件夹。
