@@ -1,34 +1,38 @@
-*vinegar.txt*  给 netrw 一个更好的装扮
+*vinegar.txt*                                           给 netrw 一个更好的装扮
+
+===============================================================================
 
 Author:  Tim Pope <http://tpo.pe/>
 Repo:    https://github.com/tpope/vim-vinegar
 License: Same terms as Vim itself (see |license|)
-
-                                                *vinegar*
+===============================================================================
+                                                                     *vinegar*
 Vinegar 扩展了 netrw.  如果你在这里找不到想要的，, 试着去|netrw.txt| 看一下.
 
-映射                                        *vinegar-mappings*
+===============================================================================
 
-                                                *vinegar--*
--                       打开当前文件所在的文件夹。
+映射                                                        *vinegar-mappings*
+
+                                                                   *vinegar--*
+-减号                   打开当前文件所在的文件夹。
                         这是唯一一个在 netrw 缓冲区之外的按键。
 
-                                                *vinegar-~*
-~                       打开 $HOME.
+                                                                    *vinegar-~*
+~波浪号                 打开 $HOME.
 
-                                                *vinegar-c_CTRL-R_CTRL-F*
-                                                *vinegar-c_<C-R>_<C-F>*
+                                                      *vinegar-c_CTRL-R_CTRL-F*
+                                                        *vinegar-c_<C-R>_<C-F>*
 CTRL-R CTRL-F           在命令行模式下，插入当前光标下的文件的路径.  和原生的
                         |c_CTRL-R_CTRL-F| 一样, 但解决了父文件夹问题.
 
-                                                *vinegar-.*
-.                       进入命令行模式，输入当前光标下文件的路径.  
+                                                                    *vinegar-.*
+.点号                   进入命令行模式，输入当前光标下文件的路径.  
                         提供一个[count] 参数来处理多个文件.
 
-                                                *vinegar-!*
-!                       同上, 不过使用 |:!| 命令.
+                                                                     *vinegar-!*
+!感叹号                 同上, 不过使用 |:!| 命令.
 
-                                                *vinegar-y.*
+                                                                    *vinegar-y.*
 y.                      复制当前行或选中的多行文件、文件夹的绝对路径
                         多行使用[count] 参数.
 
