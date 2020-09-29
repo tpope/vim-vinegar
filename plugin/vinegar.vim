@@ -28,7 +28,7 @@ endif
 unlet! s:netrw_up
 
 nnoremap <silent> <Plug>VinegarUp :call <SID>opendir('edit')<CR>
-if empty(maparg('-', 'n'))
+if empty(maparg('-', 'n')) && !hasmapto('<Plug>VinegarUp')
   nmap - <Plug>VinegarUp
 endif
 
