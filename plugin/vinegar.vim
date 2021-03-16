@@ -36,6 +36,12 @@ nnoremap <silent> <Plug>VinegarTabUp :call <SID>opendir('tabedit')<CR>
 nnoremap <silent> <Plug>VinegarSplitUp :call <SID>opendir('split')<CR>
 nnoremap <silent> <Plug>VinegarVerticalSplitUp :call <SID>opendir('vsplit')<CR>
 
+function! s:sort_sequence(suffixes) abort
+  return '[\/]$,*' . (empty(a:suffixes) ? '' : ',\%(' .
+        \ join(map(split(a:suffixes, ','), 'escape(v:val, ".*$~")'), '\|') . '\)[*@]\=$')
+endfunction
+let g:netrw_sort_sequence = s:sort_sequence(&suffixes)
+
 function! s:opendir(cmd) abort
   let df = ','.s:dotfiles
   if expand('%:t')[0] ==# '.' && g:netrw_list_hide[-strlen(df):-1] ==# df
@@ -66,6 +72,12 @@ endfunction
 augroup vinegar
   autocmd!
   autocmd FileType netrw call s:setup_vinegar()
+  if exists('##OptionSet')
+    autocmd OptionSet suffixes
+          \ if s:sort_sequence(v:option_old) ==# get(g:, 'netrw_sort_sequence') |
+          \   let g:netrw_sort_sequence = s:sort_sequence(v:option_new) |
+          \ endif
+  endif
 augroup END
 
 function! s:slash() abort
@@ -96,6 +108,7 @@ function! s:escaped(first, last) abort
   let files = s:relatives(a:first, a:last)
   return join(map(files, 's:fnameescape(v:val)'), ' ')
 endfunction
+" 97f3fbc9596f3997ebf8e30bfdd00ebb34597722
 
 function! s:setup_vinegar() abort
   if !exists('s:netrw_up')
@@ -122,8 +135,6 @@ function! s:setup_vinegar() abort
   endif
   nmap <buffer> ! .!
   xmap <buffer> ! .!
-  let g:netrw_sort_sequence = '[\/]$,*' . (empty(&suffixes) ? '' : ',\%(' .
-        \ join(map(split(&suffixes, ','), 'escape(v:val, ".*$~")'), '\|') . '\)[*@]\=$')
   exe 'syn match netrwSuffixes =\%(\S\+ \)*\S\+\%('.join(map(split(&suffixes, ','), s:escape), '\|') . '\)[*@]\=\S\@!='
   hi def link netrwSuffixes SpecialKey
 endfunction
