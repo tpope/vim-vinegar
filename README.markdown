@@ -30,8 +30,8 @@ to even consider.
   Press `gh` to toggle dot file hiding.
 * Press `.` on a file to pre-populate it at the end of a `:` command line.
   This is great, for example, to quickly initiate a `:grep` of the file or
-  directory under the cursor.  There's also `!`, which starts the line off
-  with a bang.  Type `!chmod +x` and get `:!chmod +x path/to/file`.
+  directory under the cursor.  Type `.!chmod +x` and
+  get `:!chmod +x path/to/file`.
 * Press `y.` to yank an absolute path for the file under the cursor.
 * Press `~` to go home.
 * Use Vim's built-in `CTRL-^` (`CTRL-6`) for switching back to the previous

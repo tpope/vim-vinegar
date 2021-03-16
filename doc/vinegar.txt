@@ -31,7 +31,7 @@ CTRL-R CTRL-F           In command line mode, insert the path to the file
                         multiple files.
 
                                                 *vinegar-!*
-!                       As above, but use a |:!| command line.
+!                       As above, but use a |:!| command line.  Deprecated.
 
                                                 *vinegar-y.*
 y.                      Yank the current line or [count] lines as absolute
