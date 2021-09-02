@@ -54,7 +54,7 @@ function! s:opendir(cmd) abort
   elseif expand('%') =~# '^$\|^term:[\/][\/]'
     execute a:cmd '.'
   else
-    execute a:cmd '%:h' . s:slash()
+    execute a:cmd '%:h' . (expand('%:p') =~# '^\a\a\+:' ? s:slash() : '')
     call s:seek(expand('#:t'))
   endif
 endfunction
