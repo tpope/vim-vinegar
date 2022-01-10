@@ -113,7 +113,7 @@ endfunction
 function! s:setup_vinegar() abort
   if !exists('s:netrw_up')
     let orig = maparg('-', 'n')
-    if orig =~? '^<plug>'
+    if orig =~? '^<plug>' && orig !=# '<Plug>VinegarUp'
       let s:netrw_up = 'execute "normal \'.substitute(orig, ' *$', '', '').'"'
     elseif orig =~# '^:'
       " :exe "norm! 0"|call netrw#LocalBrowseCheck(<SNR>123_NetrwBrowseChgDir(1,'../'))<CR>
