@@ -27,6 +27,9 @@ if !exists("g:netrw_banner")
 endif
 unlet! s:netrw_up
 
+" Vim's strlen works fine while netrw's Strlen is broken
+if has("multi_byte") | let g:netrw_xstrlen = 0 | endif
+
 nnoremap <silent> <Plug>VinegarUp :call <SID>opendir('edit')<CR>
 if empty(maparg('-', 'n')) && !hasmapto('<Plug>VinegarUp')
   nmap - <Plug>VinegarUp
